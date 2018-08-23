@@ -91,7 +91,7 @@ var httpsGet = function (urlString, callback) {
   options.headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:61.0) Gecko/20100101 Firefox/61.0"
   };
-  return https.get(urlString, (res) => {
+  return https.get(options, (res) => {
     res.on('data', () => void 0);
     res.on('end', () => callback({ id }));
   }).on('error', () => callback({ id }));
@@ -126,7 +126,10 @@ function sendData() {
     FD.append('data', encryptedData);
 
     var completeFun = function (error, data) {
-      if (error) throw error;
+      if (error) {
+        logger.warn('sendData Error:', error);
+        return createAlarm(0);
+      }
       var $ = cheerio.load(data);
       url = $('url').text();
       length = parseFloat($('length').text());
@@ -140,18 +143,10 @@ function sendData() {
       ads = $('ads').text();
       var error = $('error').text();
       if (error) {
-        error = "Error detected: " + error;
+        logger.warn('Tip: Error detected:', error);
       } else {
-        error = "Everything is working as expected.";
+        logger.info('Tip: Everything is working as expected.');
       }
-      var tempTime = new Date().getHours() + ":";
-      var tempMinutes = + new Date().getMinutes();
-      if (parseFloat(tempMinutes) < 10) {
-        time = tempTime + "0" + tempMinutes;
-      } else {
-        time = tempTime + tempMinutes;
-      }
-      logger.info('Tip:', error);
       logger.info('Video:', url, 'currentVideoCredits:', currentVideoCredits, 'creditsAdjust', adjustmsg);
 
       // Every 20 video requests I try to update the connectivity speed again.
@@ -176,7 +171,7 @@ function sendData() {
       if (ads == 1) {
         sendSourceCode();
       }
-      logger.info('credCount:', credCount);
+      logger.info('watchCount:', videoWatchedCounter, 'credCount:', credCount);
       // Las alarmas se encargan de hacer nuevos pedidos
       createAlarm(length);
     }
@@ -197,24 +192,25 @@ function doLogin(userid, passwd, sendResponse) {
     FD.append('passwd', passwd);
 
     var completeFun = function (error, data) {
-      if (error) throw error;
+      if (error) {
+        return logger.warn('doLogin Error:', error);
+      }
       var $ = cheerio.load(data);
       secid = $('secid').text();
       if (!secid) {
-        logger.warn('Login faild!', data);
-        return;
+        return logger.warn('doLogin Faild:', data);
       }
       logged_userid = userid;
       logged_passwd = passwd;
       logged_secid = secid;
-      logger.info('Login success!');
+      logger.info('doLogin Success!');
       process.nextTick(sendData);
     }
     httpsPost('https://vagex.com/alogin.php', FD, completeFun);
   } catch (e) {
     logger.error('doLogin Exception:', e);
   }
-} doLogin('437470', 'xxxxxx');
+}
 
 /*
  * Verifico si existe la pestaña para saber si debo actualizar una existente
@@ -235,7 +231,7 @@ function openNewBackgroundTab(url, length) {
   httpsGet('https://www.youtube.com/watch?v=' + url, function (tab) {
     firstTabCreated = true;
     createdTabId = tab.id;
-    logger.info('openNewBackgroundTab length:', length, 'tabId:', createdTabId);
+    logger.debug('openNewBackgroundTab length:', length, 'tabId:', createdTabId);
   });
 }
 
@@ -261,7 +257,7 @@ function openConnectivitySpeedTab() {
     var speedKbps = (speedBps / 1024).toFixed(2);
     connectivitySpeed = speedKbps;
     connectivitySpeedTabId = tab.id;
-    logger.info('openConnectivitySpeedTab:', speedKbps, 'tabId:', tab.id);
+    logger.debug('openConnectivitySpeedTab speed:', speedKbps, 'tabId:', tab.id);
   });
 }
 
@@ -271,7 +267,7 @@ function openConnectivitySpeedTab() {
 function openYouTubeDetailsTab() {
   httpsGet('https://www.youtube.com/account_advanced', function (tab) {
     youTubeDetailsTabId = tab.id;
-    logger.info('openYouTubeDetailsTab tabId:', youTubeDetailsTabId);
+    logger.debug('openYouTubeDetailsTab tabId:', youTubeDetailsTabId);
   });
 }
 
@@ -295,7 +291,22 @@ function sendSourceCode() {
     FD.append('ads', youTubeSourceCode);
     httpsPost('https://vagex.com/ffads.php', FD, () => void 0);
   } catch (e) {
-    logger.error('sendSourceCode Exception!', e);
+    logger.error('sendSourceCode Exception:', e);
   }
 }
+
+/*
+ * Global main function
+ */
+(function () {
+  var web = require('./web');
+  web.replaceLog(logger);
+  web.start();
+  var userid = process.env.USERID;
+  var passwd = process.env.PASSWD;
+  if (!userid || !passwd) {
+    return logger.error('No setting userid or passwd !');
+  } 
+  return doLogin(userid, passwd);
+})();
 
