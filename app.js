@@ -141,13 +141,16 @@ function sendData() {
       adjust = $('adjust').text();
       adjustmsg = $('adjustmsg').text();
       ads = $('ads').text();
+      if (!url || !sid) {
+        logger.warn('Tip: Error data:', data);
+      }
       var error = $('error').text();
       if (error) {
         logger.warn('Tip: Error detected:', error);
       } else {
         logger.info('Tip: Everything is working as expected.');
       }
-      logger.info('Video:', url, 'currentVideoCredits:', currentVideoCredits, 'creditsAdjust', adjustmsg);
+      logger.info('Video:', url, 'currentVideoCredits:', currentVideoCredits, 'creditsAdjust:', adjustmsg);
 
       // Every 20 video requests I try to update the connectivity speed again.
       videoWatchedCounter++;
