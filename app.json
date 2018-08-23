@@ -1,0 +1,18 @@
+{
+  "name": "vagex-robot",
+  "description": "Deploy vagex-robot to Heroku.",
+  "keywords": ["vagex-robot"],
+  "env": {
+    "USERID": {
+       "description": "UserID is a number such as 437470.",
+       "value": ""
+     },
+     "PASSWD": {
+       "description": "Password to login vagex.",
+       "value": ""
+     }
+  },
+  "stack": "container",
+  "website": "https://github.com/xiaokaixuan/vagex-robot",
+  "repository": "https://github.com/xiaokaixuan/vagex-robot"
+ }
