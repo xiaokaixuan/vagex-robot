@@ -141,9 +141,7 @@ function sendData() {
       adjust = $('adjust').text() || 0;
       adjustmsg = $('adjustmsg').text();
       ads = $('ads').text();
-      if (!url || !sid) {
-        logger.warn('Tip: Error resp data:', data);
-      }
+      if (!url || !sid) logger.warn('Tip: Error resp data:', data);
       var error = $('error').text();
       if (error) {
         logger.warn('Tip: Error detected:', error);
@@ -258,6 +256,7 @@ function openConnectivitySpeedTab() {
     var bitsLoaded = downloadSize * 8;
     var speedBps = Math.round(bitsLoaded / duration);
     var speedKbps = (speedBps / 1024).toFixed(2);
+    if (speedKbps < 50) speedKbps = '50.00'; // Limit min speed 50Kbps ?
     connectivitySpeed = speedKbps;
     connectivitySpeedTabId = tab.id;
     logger.debug('openConnectivitySpeedTab speed:', speedKbps, 'tabId:', tab.id);
