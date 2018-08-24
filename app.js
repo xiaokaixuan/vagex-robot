@@ -131,18 +131,18 @@ function sendData() {
         return createAlarm(0);
       }
       var $ = cheerio.load(data);
-      url = $('url').text();
-      length = parseFloat($('length').text());
-      credits = parseFloat($('credits').text());
+      url = $('url').text() || void 0;
+      length = $('length').text() || 0;
+      credits = $('credits').text();
       currentVideoCredits = length / 30;
-      sid = $('sid').text();
+      sid = $('sid').text() || void 0;
       wsubs = $('wsubs').text();
       wlikes = $('wlikes').text();
-      adjust = $('adjust').text();
+      adjust = $('adjust').text() || 0;
       adjustmsg = $('adjustmsg').text();
       ads = $('ads').text();
       if (!url || !sid) {
-        logger.warn('Tip: Error data:', data);
+        logger.warn('Tip: Error resp data:', data);
       }
       var error = $('error').text();
       if (error) {
