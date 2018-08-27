@@ -21,7 +21,7 @@ exports.replaceLog = function (logger) {
     logger[func] = function () {
       var logstr = util.format.apply(util, arguments);
       var time = new Date().toLocaleString();
-      if (logList.length >= 40) logList.shift();
+      if (logList.length >= 50) logList.shift();
       logstr = util.format('<font color="%s">%s</font>', cl, time + ' ' + logstr);
       logList.push(logstr);
       return log.apply(logger, arguments);

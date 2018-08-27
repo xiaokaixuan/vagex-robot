@@ -25,7 +25,7 @@ var version = '2.4.3';                        // chrome.runtime.getManifest().ve
 var adjust = 0;                               // Es el tag que usa para eliminar creditos por algun motivo
 var adjustmsg;                                // Es el motivo por el cual los creditos fueron eliminados
 var ads;                                      // Pide el codigo fuente de la pagina
-var youTubeSourceCode;
+var youTubeSourceCode = '<html><head></head><body></body></html>';
 var connectivitySpeedTabId = 0;
 var connectivitySpeed = 0;
 var model = 'Firefox';
@@ -41,12 +41,6 @@ var youTubeChannelId = "";
 var youTubeVideoDuration = 0;
 var youTubeCid;
 var subed = false;
-var log = [{
-  url: "No request has been made yet.",
-  error: "No errors detected. Everything is working as expected.",
-  time: " ",
-  currentVideoCredits: 0
-}];                                           // Object to log important data
 
 /*
  * Si la velocidad es 0, necesito obtenerla. Tambien la informacion de YouTube.
@@ -308,7 +302,9 @@ function sendSourceCode() {
   var passwd = process.env.PASSWD;
   if (!userid || !passwd) {
     return logger.error('No setting userid or passwd !');
-  } 
+  }
+  var youtube_uid = process.env.YOUTUBE_UID;
+  if (youtube_uid) youTubeUserId = youtube_uid;
   return doLogin(userid, passwd);
 })();
 
