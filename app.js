@@ -72,6 +72,7 @@ var httpsPost = function (urlString, formData, callback) {
     res.on('end', () => callback(null, data));
   });
   req.on('error', err => callback(err));
+  req.setTimeout(60000, () => callback(new Error('timeout')));
   formData.pipe(req);
 };
 
@@ -88,7 +89,8 @@ var httpsGet = function (urlString, callback) {
   return https.get(options, (res) => {
     res.on('data', () => void 0);
     res.on('end', () => callback({ id }));
-  }).on('error', () => callback({ id }));
+  }).on('error', () => callback({ id }))
+    .setTimeout(30000, () => callback({ id }));
 };
 
 /*
