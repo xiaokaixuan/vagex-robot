@@ -79,18 +79,22 @@ var httpsPost = function (urlString, formData, callback) {
 /*
  * Https GET Request
 */
-var httpsGet = function (urlString, callback) {
+var httpsGet = function (urlString, needText, callback) {
+  if (!callback && needText) {
+    callback = needText;
+    needText = void 0;
+  }
   var id = httpsGet.tid || 1;
   httpsGet.tid = id + 1;
   var options = mod_url.parse(urlString);
   options.headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:61.0) Gecko/20100101 Firefox/61.0"
   };
+  if (needText) var text = '';
   return https.get(options, (res) => {
-    res.on('data', () => void 0);
-    res.on('end', () => callback({ id }));
-  }).on('error', () => callback({ id }))
-    .setTimeout(30000, () => callback({ id }));
+    res.on('data', d => needText && (text += d));
+    res.on('end', () => callback({ id, text }));
+  }).on('error', () => callback({ id, text })).setTimeout(30000, () => callback({ id, text }));
 };
 
 /*
@@ -144,7 +148,7 @@ function sendData() {
       } else {
         logger.info('Tip: Everything is working as expected.');
       }
-      logger.info('Video:', url, 'currentVideoCredits:', currentVideoCredits, 'creditsAdjust:', adjustmsg);
+      logger.info('Video:', url, 'wsubs:', wsubs, 'currentVideoCredits:', currentVideoCredits, 'creditsAdjust:', adjustmsg);
 
       // Every 20 video requests I try to update the connectivity speed again.
       videoWatchedCounter++;
@@ -222,13 +226,30 @@ function checkIfTabExistsCallback(url, length) {
 }
 
 /*
+ * Found Channel Id in web page source
+*/
+function foundChannelIdInSource(source) {
+  if (source) {
+    var regexp = /"\/channel\/(\S+?)"/;
+    var result = source.match(regexp);
+    if (result) return result[1];
+  }
+  return void 0;
+}
+
+/*
  * Abro una pestaña nueva cuando no existe una del plugin
 */
 function openNewBackgroundTab(url, length) {
-  httpsGet('https://www.youtube.com/watch?v=' + url, function (tab) {
+  youTubeCid = void 0, subed = false;
+  httpsGet('https://www.youtube.com/watch?v=' + url, true, function (tab) {
     firstTabCreated = true;
     createdTabId = tab.id;
-    logger.debug('openNewBackgroundTab length:', length, 'tabId:', createdTabId);
+    if (wsubs == 1) {
+      youTubeCid = foundChannelIdInSource(tab.text);
+      subed = youTubeCid ? true : false;
+    }
+    logger.debug('openNewBackgroundTab length:', length, 'tabId:', createdTabId, 'subed:', subed);
   });
 }
 
