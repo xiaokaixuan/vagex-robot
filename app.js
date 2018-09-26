@@ -226,7 +226,7 @@ function checkIfTabExistsCallback(url, length) {
 }
 
 /*
- * Found Channel Id in web page source
+ * Found Channel Id in youtube page source
 */
 function foundChannelIdInSource(source) {
   if (source) {
@@ -242,7 +242,7 @@ function foundChannelIdInSource(source) {
 */
 function openNewBackgroundTab(url, length) {
   youTubeCid = void 0, subed = false;
-  httpsGet('https://www.youtube.com/watch?v=' + url, true, function (tab) {
+  httpsGet('https://www.youtube.com/watch?v=' + url, wsubs == 1, function (tab) {
     firstTabCreated = true;
     createdTabId = tab.id;
     if (wsubs == 1) {
