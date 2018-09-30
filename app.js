@@ -65,16 +65,21 @@ var httpsPost = function (urlString, formData, callback) {
   };
   options.headers['Content-Type'] = formData.getHeaders()['content-type'];
   options.headers['Content-Length'] = formData.getLengthSync();
+  var oncecall = function () {
+    if (!callback) return;
+    callback.apply(null, arguments);
+    callback = void 0;
+  };
   var req = https.request(options, res => {
     res.setEncoding('utf8');
     var data = '';
     res.on('data', d => data += d);
-    res.on('end', () => callback(null, data));
+    res.on('end', () => oncecall(null, data));
   });
-  req.on('error', err => callback(err));
+  req.on('error', err => oncecall(err));
   req.setTimeout(60000, () => {
     req.abort();
-    return callback(new Error('timeout'));
+    return oncecall(new Error('timeout'));
   });
   formData.pipe(req);
 };
@@ -93,15 +98,20 @@ var httpsGet = function (urlString, needText, callback) {
   options.headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:61.0) Gecko/20100101 Firefox/61.0"
   };
+  var oncecall = function () {
+    if (!callback) return;
+    callback.apply(null, arguments);
+    callback = void 0;
+  };
   if (needText) var text = '';
   var req = https.get(options, (res) => {
     res.on('data', d => needText && (text += d));
-    res.on('end', () => callback({ id, text }));
+    res.on('end', () => oncecall({ id, text }));
   });
-  req.on('error', () => callback({ id, text }));
+  req.on('error', () => oncecall({ id, text }));
   req.setTimeout(30000, () => {
     req.abort();
-    return callback({ id, text });
+    return oncecall({ id, text });
   });
 };
 
