@@ -9,7 +9,7 @@ var logList = [];
 exports.start = () => http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/html' });
   var content = util.format('<html><head><meta charset="utf-8"><title>%s</title></head><body>', new Date().toLocaleString());
-  content += _.join(logList, '<br>');
+  content += _.join(logList, '');
   content += '</body></html>';
   return res.end(content);
 }).listen(process.env.PORT || 8080);
@@ -24,7 +24,7 @@ exports.replaceLog = function (logger) {
       var logstr = util.format.apply(util, arguments);
       var time = new Date().toLocaleString();
       if (logList.length >= 50) logList.shift();
-      logstr = util.format('<font color="%s">%s</font>', clr, time + ' ' + logstr);
+      logstr = util.format('<font color="%s"><xmp>%s</xmp></font>', clr, time + ' ' + logstr);
       logList.push(logstr);
       return log.apply(logger, arguments);
     };

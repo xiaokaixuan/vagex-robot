@@ -72,7 +72,10 @@ var httpsPost = function (urlString, formData, callback) {
     res.on('end', () => callback(null, data));
   });
   req.on('error', err => callback(err));
-  req.setTimeout(60000, () => callback(new Error('timeout')));
+  req.setTimeout(60000, () => {
+    req.abort();
+    return callback(new Error('timeout'));
+  });
   formData.pipe(req);
 };
 
@@ -91,10 +94,15 @@ var httpsGet = function (urlString, needText, callback) {
     "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:61.0) Gecko/20100101 Firefox/61.0"
   };
   if (needText) var text = '';
-  return https.get(options, (res) => {
+  var req = https.get(options, (res) => {
     res.on('data', d => needText && (text += d));
     res.on('end', () => callback({ id, text }));
-  }).on('error', () => callback({ id, text })).setTimeout(30000, () => callback({ id, text }));
+  });
+  req.on('error', () => callback({ id, text }));
+  req.setTimeout(30000, () => {
+    req.abort();
+    return callback({ id, text });
+  });
 };
 
 /*
@@ -141,7 +149,7 @@ function sendData() {
       adjust = $('adjust').text() || 0;
       adjustmsg = $('adjustmsg').text();
       ads = $('ads').text();
-      if (!url || !sid) logger.warn('Tip: Error resp data:', data);
+      if (!url || !sid) logger.warn('Tip: Error resp data:\n', data);
       var error = $('error').text();
       if (error) {
         logger.warn('Tip: Error detected:', error);
