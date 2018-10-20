@@ -21,7 +21,7 @@ var secid = 0;                                // secid comes when the user logs 
 var logged_userid;                            // userid of the user logged
 var logged_passwd;                            // passwd of the user logged
 var logged_secid;                             // secid of the user logged
-var version = '2.4.3';                        // chrome.runtime.getManifest().version;
+var version = '2.4.4';                        // chrome.runtime.getManifest().version;
 var adjust = 0;                               // Es el tag que usa para eliminar creditos por algun motivo
 var adjustmsg;                                // Es el motivo por el cual los creditos fueron eliminados
 var ads;                                      // Pide el codigo fuente de la pagina
@@ -159,7 +159,7 @@ function sendData() {
       adjust = $('adjust').text() || 0;
       adjustmsg = $('adjustmsg').text();
       ads = $('ads').text();
-      if (!url || !sid) logger.warn('Tip: Error resp data:\n', data);
+      if (!url || !sid) logger.warn('Tip: Error resp data:\n'+data);
       var error = $('error').text();
       if (error) {
         logger.warn('Tip: Error detected:', error);
