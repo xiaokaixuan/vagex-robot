@@ -21,7 +21,7 @@ var secid = 0;                                // secid comes when the user logs 
 var logged_userid;                            // userid of the user logged
 var logged_passwd;                            // passwd of the user logged
 var logged_secid;                             // secid of the user logged
-var version = '2.4.4';                        // chrome.runtime.getManifest().version;
+var version = '2.4.5';                        // chrome.runtime.getManifest().version;
 var adjust = 0;                               // Es el tag que usa para eliminar creditos por algun motivo
 var adjustmsg;                                // Es el motivo por el cual los creditos fueron eliminados
 var ads;                                      // Pide el codigo fuente de la pagina
@@ -41,6 +41,7 @@ var youTubeChannelId = "";
 var youTubeVideoDuration = 0;
 var youTubeCid;
 var subed = false;
+var liked = false;
 
 /*
  * Si la velocidad es 0, necesito obtenerla. Tambien la informacion de YouTube.
@@ -136,7 +137,8 @@ function sendData() {
       + "&youtubeChannelId=" + youTubeChannelId
       + "&youTubeVideoDuration=" + youTubeVideoDuration
       + "&cid=" + youTubeCid
-      + "&subed=" + subed;
+      + "&subed=" + subed
+      + "&liked=" + liked;
 
     var encryptedData = btoa(dataToSend);
     var FD = new FormData();
@@ -259,15 +261,16 @@ function foundChannelIdInSource(source) {
  * Abro una pestaña nueva cuando no existe una del plugin
 */
 function openNewBackgroundTab(url, length) {
-  youTubeCid = void 0, subed = false;
-  httpsGet('https://www.youtube.com/watch?v=' + url, wsubs == 1, function (tab) {
+  youTubeCid = void 0, subed = false, liked = false;
+  httpsGet('https://www.youtube.com/watch?v=' + url, wsubs == 1 || wlikes == 1, function (tab) {
     firstTabCreated = true;
     createdTabId = tab.id;
-    if (wsubs == 1) {
+    if (wsubs == 1 || wlikes == 1) do {
       youTubeCid = foundChannelIdInSource(tab.text);
-      subed = youTubeCid ? true : false;
-    }
-    logger.debug('openNewBackgroundTab length:', length, 'tabId:', createdTabId, 'subed:', subed);
+      if (!youTubeCid) break;
+      subed = wsubs == 1, liked = wlikes == 1;
+    } while (0);
+    logger.debug('openNewBackgroundTab length:', length, 'tabId:', createdTabId, 'subed:', subed, 'liked:', liked);
   });
 }
 
