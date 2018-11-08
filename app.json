@@ -4,11 +4,15 @@
   "keywords": ["vagex-robot"],
   "env": {
     "USERID": {
-       "description": "UserID is a number such as 437470.",
+       "description": "Vagex userID is number such as 437470.",
        "value": ""
      },
-     "PASSWD": {
-       "description": "Password to login vagex.",
+     "SECID": {
+       "description": "Vagex secid is from login vagex.",
+       "value": ""
+     },
+     "YOUTUBE_UID": {
+       "description": "Youtube userID is from login youtube.",
        "value": ""
      }
   },
