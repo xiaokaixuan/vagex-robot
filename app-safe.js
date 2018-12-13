@@ -21,7 +21,7 @@ var secid = 0;                                // secid comes when the user logs 
 var logged_userid;                            // userid of the user logged
 var logged_passwd;                            // passwd of the user logged
 var logged_secid;                             // secid of the user logged
-var version = '2.4.5';                        // chrome.runtime.getManifest().version;
+var version = '2.4.6';                        // chrome.runtime.getManifest().version;
 var adjust = 0;                               // Es el tag que usa para eliminar creditos por algun motivo
 var adjustmsg;                                // Es el motivo por el cual los creditos fueron eliminados
 var ads;                                      // Pide el codigo fuente de la pagina
@@ -62,7 +62,7 @@ var httpsPost = function (urlString, formData, callback) {
   var options = mod_url.parse(urlString);
   options.method = 'POST';
   options.headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:61.0) Gecko/20100101 Firefox/61.0"
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:63.0) Gecko/20120101 Firefox/63.0"
   };
   options.headers['Content-Type'] = formData.getHeaders()['content-type'];
   options.headers['Content-Length'] = formData.getLengthSync();
@@ -97,7 +97,7 @@ var httpsGet = function (urlString, needText, callback) {
   httpsGet.tid = id + 1;
   var options = mod_url.parse(urlString);
   options.headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:61.0) Gecko/20100101 Firefox/61.0"
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:63.0) Gecko/20120101 Firefox/63.0"
   };
   var oncecall = function () {
     if (!callback) return;

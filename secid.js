@@ -7,7 +7,7 @@ var httpsPost = function (urlString, formData, callback) {
   var options = mod_url.parse(urlString);
   options.method = 'POST';
   options.headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:61.0) Gecko/20100101 Firefox/61.0"
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:63.0) Gecko/20120101 Firefox/63.0"
   };
   options.headers['Content-Type'] = formData.getHeaders()['content-type'];
   options.headers['Content-Length'] = formData.getLengthSync();
