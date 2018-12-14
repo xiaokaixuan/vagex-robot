@@ -249,11 +249,12 @@ function checkIfTabExistsCallback(url, length) {
  * Found Channel Id in youtube page source
 */
 function foundChannelIdInSource(source) {
-  if (source) {
+  if (source) do {
     var regexp = /"\/channel\/(\S+?)"/;
     var result = source.match(regexp);
-    if (result) return result[1];
-  }
+    if (!result || !result[1]) break;
+    return 'https://www.youtube.com/channel/' + result[1];
+  } while (0);
   return void 0;
 }
 
@@ -262,11 +263,11 @@ function foundChannelIdInSource(source) {
 */
 function openNewBackgroundTab(url, length) {
   youTubeCid = void 0, subed = false, liked = false;
-  httpsGet('https://www.youtube.com/watch?v=' + url, wsubs == 1 || wlikes == 1, function (tab) {
+  httpsGet('https://www.youtube.com/watch?v=' + url, true, function (tab) {
     firstTabCreated = true;
     createdTabId = tab.id;
+    youTubeCid = foundChannelIdInSource(tab.text);
     if (wsubs == 1 || wlikes == 1) do {
-      youTubeCid = foundChannelIdInSource(tab.text);
       if (!youTubeCid) break;
       subed = wsubs == 1, liked = wlikes == 1;
     } while (0);
