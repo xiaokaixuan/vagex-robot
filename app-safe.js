@@ -21,7 +21,7 @@ var secid = 0;                                // secid comes when the user logs 
 var logged_userid;                            // userid of the user logged
 var logged_passwd;                            // passwd of the user logged
 var logged_secid;                             // secid of the user logged
-var version = '2.4.6';                        // chrome.runtime.getManifest().version;
+var version = '2.4.8';                        // chrome.runtime.getManifest().version;
 var adjust = 0;                               // Es el tag que usa para eliminar creditos por algun motivo
 var adjustmsg;                                // Es el motivo por el cual los creditos fueron eliminados
 var ads;                                      // Pide el codigo fuente de la pagina
@@ -39,7 +39,12 @@ var youTubeDetailsTabId;
 var youTubeUserId = "";
 var youTubeChannelId = "";
 var youTubeVideoDuration = 0;
-var youTubeCid;
+var youTubeCid = '';
+var youTubeAdata = 0;
+var youTubeAdata2 = 0;
+var youTubeAdata3 = 0;
+var youTubeAdata4 = '';
+var youTubeAdata5 = '';
 var subed = false;
 var liked = false;
 
@@ -137,6 +142,11 @@ function sendData() {
       + "&youtubeChannelId=" + youTubeChannelId
       + "&youTubeVideoDuration=" + youTubeVideoDuration
       + "&cid=" + youTubeCid
+      + "&videodata=" + youTubeAdata
+      + "&videodata2=" + youTubeAdata2
+      + "&videodata3=" + youTubeAdata3
+      + "&videodata4=" + encodeURI(youTubeAdata4)
+      + "&videodata5=" + youTubeAdata5
       + "&subed=" + subed
       + "&liked=" + liked;
 
@@ -249,13 +259,31 @@ function checkIfTabExistsCallback(url, length) {
  * Found Channel Id in youtube page source
 */
 function foundChannelIdInSource(source) {
-  if (source) do {
-    var regexp = /"\/channel\/(\S+?)"/;
+  if (source) {
+    // Get views
+    var regexp = /\\"viewCount\\":\\"(\d+)\\"/;
     var result = source.match(regexp);
-    if (!result || !result[1]) break;
-    return 'https://www.youtube.com/channel/' + result[1];
-  } while (0);
-  return void 0;
+    if (result && result[1]) youTubeAdata = result[1];
+    // Get likes
+    regexp = /like this video along with ([\d|,]+?) other people/;
+    result = source.match(regexp);
+    if (result && result[1]) youTubeAdata2 = result[1];
+    // Get subs
+    regexp = /yt-subscriber-count\" title=\"(\d+)\"/;
+    result = source.match(regexp);
+    if (result && result[1]) youTubeAdata3 = result[1];
+    // Get title
+    regexp = /\\"title\\":\\"(.+?)\\"/;
+    result = source.match(regexp);
+    if (result && result[1]) youTubeAdata4 = result[1];
+    // Get channel ID
+    regexp = /\"ucid\":\"(\S+?)\"/;
+    result = source.match(regexp);
+    if (result && result[1]) youTubeAdata5 = youTubeCid = result[1];
+  }
+  logger.debug('views:', youTubeAdata, 'likes:', youTubeAdata2, 'subs:', youTubeAdata3);
+  logger.debug('title:', youTubeAdata4, 'channel:', youTubeAdata5);
+  return youTubeCid;
 }
 
 /*
