@@ -21,7 +21,7 @@ var secid = 0;                                // secid comes when the user logs 
 var logged_userid;                            // userid of the user logged
 var logged_passwd;                            // passwd of the user logged
 var logged_secid;                             // secid of the user logged
-var version = '2.4.8';                        // chrome.runtime.getManifest().version;
+var version = '2.4.9';                        // chrome.runtime.getManifest().version;
 var adjust = 0;                               // Es el tag que usa para eliminar creditos por algun motivo
 var adjustmsg;                                // Es el motivo por el cual los creditos fueron eliminados
 var ads;                                      // Pide el codigo fuente de la pagina
@@ -45,6 +45,7 @@ var youTubeAdata2 = 0;
 var youTubeAdata3 = 0;
 var youTubeAdata4 = '';
 var youTubeAdata5 = '';
+var youTubeaytuser = '';
 var subed = false;
 var liked = false;
 
@@ -147,6 +148,7 @@ function sendData() {
       + "&videodata3=" + youTubeAdata3
       + "&videodata4=" + encodeURI(youTubeAdata4)
       + "&videodata5=" + youTubeAdata5
+      + "&bytuser=" + youTubeaytuser
       + "&subed=" + subed
       + "&liked=" + liked;
 
@@ -377,7 +379,10 @@ function sendSourceCode() {
     return logger.error('No setting userid or passwd !');
   }
   var youtube_uid = process.env.YOUTUBE_UID;
-  if (youtube_uid) youTubeUserId = youtube_uid;
+  if (youtube_uid) {
+    youTubeUserId = youtube_uid;
+    youTubeaytuser = 'UC'+youtube_uid;
+  }
   return doLogin(userid, passwd);
 })();
 
