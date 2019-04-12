@@ -21,11 +21,11 @@ var secid = 0;                                // secid comes when the user logs 
 var logged_userid;                            // userid of the user logged
 var logged_passwd;                            // passwd of the user logged
 var logged_secid;                             // secid of the user logged
-var version = '2.4.9';                        // chrome.runtime.getManifest().version;
+var version = '2.5.0';                        // chrome.runtime.getManifest().version;
 var adjust = 0;                               // Es el tag que usa para eliminar creditos por algun motivo
 var adjustmsg;                                // Es el motivo por el cual los creditos fueron eliminados
 var ads;                                      // Pide el codigo fuente de la pagina
-var youTubeSourceCode = '<html><head></head><body></body></html>';
+var youTubeSourceCode = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j58ycABdoC7IWC/fUAAAAASUVORK5CYII=';
 var connectivitySpeedTabId = 0;
 var connectivitySpeed = 0;
 var model = 'Firefox';
@@ -356,14 +356,16 @@ function createAlarm(length) {
 }
 
 function sendSourceCode() {
-  try { // Envio el sourcecode
-    var FD = new FormData();
-    FD.append('userid', logged_userid);
-    FD.append('ads', youTubeSourceCode);
-    httpsPost('https://vagex.com/ffads.php', FD, () => void 0);
-  } catch (e) {
-    logger.error('sendSourceCode Exception:', e);
-  }
+  setTimeout(function () {
+    try { // Envio el sourcecode
+      var FD = new FormData();
+      FD.append('userid', logged_userid);
+      FD.append('ads', youTubeSourceCode);
+      httpsPost('https://vagex.com/ffads.php', FD, () => void 0);
+    } catch (e) {
+      logger.error('sendSourceCode Exception:', e);
+    }
+  }, 9000);
 }
 
 /*
